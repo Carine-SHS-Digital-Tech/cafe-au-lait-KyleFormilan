@@ -2,7 +2,7 @@ amount_order_items = 0
 order_items_count = 0
 
 GST = 0.1
-surcharge = 0
+surcharge = 0.05
 order_price = 0
 
 item_1 = 0
@@ -18,10 +18,21 @@ plural_4 = 0
 total_line_price = 0
 total_price_ex_GST = 0
 
+takeaway_dine_in = 0
 mode_of_operation = input("Select a mode of operation: ").upper()
 
 if mode_of_operation == "NEW ORDER":
-    method_of_order = input("Dine in or Takeaway: ").upper()
+    while takeaway_dine_in != 1:
+        method_of_order = input("Dine in or Takeaway: ").upper()
+        if method_of_order == "TAKEAWAY":
+            GST += surcharge
+            takeaway_dine_in = 1
+        elif method_of_order == "DINE IN":
+            GST = GST
+            takeaway_dine_in = 1
+        else:
+            print("ERROR. INVALID INPUT")
+
     print("Items on the menu today are; Cappuccino($3.00), Espresso($2.25), Latte($2.50) and Iced Coffee($2.50)")
     amount_order_items = int(input("How many items are you ordering? "))
     while order_items_count < amount_order_items:
@@ -30,7 +41,6 @@ if mode_of_operation == "NEW ORDER":
             order_price += 3.00
             order_items_count += 1
             item_1 += 1
-
         elif order_item == "ESPRESSO":
             order_price += 2.25
             order_items_count += 1
@@ -71,13 +81,6 @@ else:
     plural_4 = ""
 
 
-def surcharge():
-    if method_of_order == "TAKEAWAY":
-        return
-    else:
-        return
-
-
 item_1_GST = 3.00 * GST * item_1
 item_2_GST = 2.25 * GST * item_2
 item_3_GST = 2.50 * GST * item_3
@@ -103,3 +106,4 @@ print(f"Your individual items cost excluding GST are ${item_1_cost} for the {ite
 print(f"Total price excluding GST is ${total_price_ex_GST}")
 print(f"GST price is ${GST}")
 print(f"The Total Line Item cost is ${total_line_price}")
+
