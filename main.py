@@ -1,4 +1,17 @@
-open(daily_orders.csv)
+import csv
+
+header = ["ORDER_ID", "TYPE", "ITEM_1",	"QTY_1", "EXGST_1",	"ITEM_2", "QTY_2", "EXGST_2", "ITEM_3",	"QTY_3",EXGST_3,	ITEM_4,	QTY_4,	EXGST_4,	ORDER_CUPS,	ORDER_GST,	ORDER_TAX,	ORDER_TOTAL]
+data = ['Afghanistan', 652090, 'AF', 'AFG']
+
+with open('test.csv', 'w', encoding='UTF8') as f:
+    writer = csv.writer(f)
+
+    # write the header
+    writer.writerow(header)
+
+    # write the data
+    writer.writerow(data)
+
 
 amount_order_items = 0
 order_items_count = 0
