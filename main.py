@@ -1,7 +1,4 @@
-import pandas as pd
-
-df = pd.read_excel (r'R:\IT\Café au Lait table.xlsx')
-print (df)
+open(daily_orders.csv)
 
 amount_order_items = 0
 order_items_count = 0
@@ -112,20 +109,20 @@ print(f"Which consists of {item_1} Cappuccino{plural_1}, {item_2} Espresso{plura
 print(f"Your individual items cost excluding GST are ${item_1_cost} for the {item_1} Cappuccino{plural_1}, "
       f"${item_2_cost} for the {item_2} Espresso{plural_2}, ${item_3_cost} for the {item_3} Latte{plural_3}, "
       f"${item_4_cost} for the {item_4} Iced Coffee{plural_4}")
-print(f"Total price excluding Extra Charges is ${total_price_ex_GST.__round__(2)}")
-print(f"Extra Charges cost is ${GST.__round__(2)}")
-print(f"The Total Line Item cost is ${total_line_price.__round__(2)}")
+print(f"Total price excluding Extra Charges is ${total_price_ex_GST:.2f}")
+print(f"Extra Charges cost is ${GST:.2f}")
+print(f"The Total Line Item cost is ${total_line_price:.2f}")
 
 
 while count_tendered == 0:
     amount_tendered = float(input("\nEnter Amount Required: $"))
     if amount_tendered < total_line_price:
         difference = total_line_price - amount_tendered
-        print(f"You owe ${difference.__round__(2)}")
+        print(f"You owe ${difference:.2f}")
         total_line_price = total_line_price - amount_tendered
     elif amount_tendered > total_line_price:
         change = amount_tendered - total_line_price
-        print(f"Your change is ${change.__round__(2)}")
+        print(f"Your change is ${change:.2f}")
         count_tendered = 1
     else:
         print("Correct amount tendered\nHere are your coffees")
