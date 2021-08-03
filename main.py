@@ -21,7 +21,7 @@ plural_4 = 0
 
 total_line_price = 0
 total_price_ex_GST = 0
-
+change = 0
 takeaway_dine_in = 0
 count_tendered = 0
 count_2 = 0
@@ -134,22 +134,38 @@ while mode_of_order_count == 0:
             print(f"Extra Charges cost is ${GST:.2f}")
             print(f"The Total Line Item cost is ${total_line_price:.2f}")
 
-
+            count_tendered = 0
+            total_line_price_new = total_line_price
             while count_tendered == 0:
                 amount_tendered = float(input("\nEnter Amount Required: $"))
-                if amount_tendered < total_line_price:
-                    difference = total_line_price - amount_tendered
-                    print(f"You owe ${difference:.2f}")
-                    total_line_price = total_line_price - amount_tendered
-                elif amount_tendered > total_line_price:
-                    change = amount_tendered - total_line_price
-                    print(f"Your change is ${change:.2f}")
-                    count_tendered = 1
-                else:
+                if amount_tendered < total_line_price_new:
+                    difference = total_line_price_new - amount_tendered
+                    print(f"You owe ${difference.__round__(2)}")
+                    total_line_price_new = total_line_price_new - amount_tendered
+                elif amount_tendered == total_line_price_new:
                     print("Correct amount tendered\nHere are your coffees")
                     count_tendered = 1
+                elif amount_tendered > total_line_price_new:
+                    change = amount_tendered - total_line_price_new
+                    print(f"Your change is ${change.__round__(2)}")
+                    count_tendered = 1
+                else:
+                    print("ERROR")
             daily_summary_continue = 0
             count_2 = 0
+
+
+            header = ["ORDER_ID", "TYPE", "Cappuccino", "EXGST_1", "Esspresso", "EXGST_2", "Latte",
+                        "EXGST_3", "Iced Coffee", "EXGST_4", "ORDER_CUPS", "ORDER_CHARGES",
+                        "ORDER_PRICE_EXC_GST", "ORDER_TOTAL"]
+            row = [order_ID, mode_of_operation, item_1, item_1_cost, item_2, item_2_cost, item_3,
+                    item_3_cost, item_4, item_4_cost, amount_order_items, GST.__round__(2), total_price_ex_GST.__round__(2),
+                    total_line_price.__round__(2)]
+            order_ID += 1
+            with open('daily_summary.csv', 'a', encoding='UTF8') as daily_summary:
+                writer = csv.writer(daily_summary)
+
+                writer.writerow(row)
 
             while count_2 == 0:
                 continue_order = input("Is it the end of the business day? ").upper()
@@ -170,22 +186,6 @@ while mode_of_order_count == 0:
                         f.truncate(0)
                         f.close()
                         daily_summary_continue = 1
-
-
-                    if mode_of_operation == "NEW ORDER":
-
-
-                        header = ["ORDER_ID", "TYPE", "Cappuccino", "EXGST_1", "Esspresso", "EXGST_2", "Latte",
-                                  "EXGST_3", "Iced Coffee", "EXGST_4", "ORDER_CUPS", "ORDER_CHARGES",
-                                  "ORDER_PRICE_EXC_GST", "ORDER_TOTAL"]
-                        row = [order_ID, mode_of_operation, item_1, item_1_cost, item_2, item_2_cost, item_3,
-                               item_3_cost, item_4, item_4_cost, amount_order_items, GST, total_price_ex_GST,
-                               total_line_price]
-                        order_ID += 1
-                        with open('daily_summary.csv', 'w', encoding='UTF8') as daily_summary:
-                            writer = csv.writer(daily_summary)
-
-                            writer.writerow(row)
 
 
                 elif continue_order == "NO":
@@ -215,6 +215,8 @@ while mode_of_order_count == 0:
                     takeaway_dine_in = 0
                     count_tendered = 0
                     mode_of_order_count = 0
-                    order_ID = 1
+                    change = 0
+                    amount_tendered = 0
+                    difference = 0
                 else:
                     print("Invalid Input. Try again.")
