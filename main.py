@@ -35,16 +35,17 @@ viewing_summary = 0
 difference = 0
 amount_tendered = 0
 
-frequency_dinein = 0
+frequency_dine_in = 0
 frequency_takeaway = 0
 frequency_total_orders = 0
 frequency_cups_coffee = 0
 frequency_income = 0
 frequency_GST = 0
+method_of_order = 0
 
-header = ["ORDER_ID", "TYPE", "Cappuccino", "EXGST_1", "Esspresso", "EXGST_2", "Latte",
-                                  "EXGST_3", "Iced Coffee", "EXGST_4", "ORDER_CUPS", "ORDER_CHARGES",
-                                  "ORDER_PRICE_EXC_GST", "ORDER_TOTAL"]
+header = ["ORDER_ID", "TYPE", "Cappuccino", "EX_GST_1", "Espresso", "EX_GST_2", "Latte", 
+          "EX_GST_3", "Iced Coffee", "EX_GST_4", "ORDER_CUPS", "ORDER_CHARGES", 
+          "ORDER_PRICE_EXC_GST", "ORDER_TOTAL"]
 
 with open('daily_summary.csv', 'w', encoding='UTF8') as daily_summary:
     writer = csv.writer(daily_summary)
@@ -70,7 +71,8 @@ while mode_of_order_count == 0:
                 else:
                     print("ERROR. INVALID INPUT")
 
-            print("\nItems on the menu today are; Cappuccino($3.00), Espresso($2.25), Latte($2.50) and Iced Coffee($2.50)")
+            print("\nItems on the menu today are; Cappuccino($3.00), Espresso($2.25), Latte($2.50) and "
+                  "Iced Coffee($2.50)")
             amount_order_items = int(input("How many items are you ordering? "))
             while order_items_count < amount_order_items:
                 order_item = input("Menu Choice: ").upper()
@@ -94,7 +96,6 @@ while mode_of_order_count == 0:
                     print("We don't serve that on our menu")
 
         elif mode_of_operation == "DAILY SUMMARY":
-            ### ADD IN WYA TO VIEW DAILY SUMMARY
             os.system("start EXCEL.EXE daily_summary.csv")
             print("You may view the Daily Summary in the daily_summary.csv file above.")
             daily_summary_continue = 1
@@ -120,7 +121,6 @@ while mode_of_order_count == 0:
             else:
                 plural_4 = ""
 
-
             item_1_GST = 3.00 * GST * item_1
             item_2_GST = 2.25 * GST * item_2
             item_3_GST = 2.50 * GST * item_3
@@ -137,12 +137,12 @@ while mode_of_order_count == 0:
 
             print("\n\nYour receipt of your order is as follows,\n")
             print(f"You ordered {amount_order_items} items")
-            print(f"Which consists of {item_1} Cappuccino{plural_1}, {item_2} Espresso{plural_2}, {item_3} Latte{plural_3} and "
-                  f"{item_4} Iced Coffee{plural_4}")
+            print(f"Which consists of {item_1} Cappuccino{plural_1}, {item_2} Espresso{plural_2}, {item_3} "
+                  f"Latte{plural_3} and {item_4} Iced Coffee{plural_4}")
 
             print(f"Your individual items cost excluding GST are ${item_1_cost} for the {item_1} Cappuccino{plural_1}, "
-                  f"${item_2_cost} for the {item_2} Espresso{plural_2}, ${item_3_cost} for the {item_3} Latte{plural_3}, "
-                  f"${item_4_cost} for the {item_4} Iced Coffee{plural_4}")
+                  f"${item_2_cost} for the {item_2} Espresso{plural_2}, ${item_3_cost} for the {item_3} "
+                  f"Latte{plural_3}, ${item_4_cost} for the {item_4} Iced Coffee{plural_4}")
             print(f"Total price excluding Extra Charges is ${total_price_ex_GST:.2f}")
             print(f"Extra Charges cost is ${GST:.2f}")
             print(f"The Total Line Item cost is ${total_line_price.__round__(2):.2f}")
@@ -167,25 +167,30 @@ while mode_of_order_count == 0:
             daily_summary_continue = 0
             count_2 = 0
 
-
-            header = ["ORDER_ID", "TYPE", "Cappuccino", "EXGST_1", "Esspresso", "EXGST_2", "Latte",
-                        "EXGST_3", "Iced Coffee", "EXGST_4", "ORDER_CUPS", "ORDER_CHARGES",
-                        "ORDER_PRICE_EXC_GST", "ORDER_TOTAL"]
-            row = [order_ID, method_of_order, item_1, item_1_cost, item_2, item_2_cost, item_3,
-                    item_3_cost, item_4, item_4_cost, amount_order_items, GST.__round__(2), total_price_ex_GST.__round__(2),
-                    total_line_price.__round__(2)]
+            header = ["ORDER_ID", "TYPE", "Cappuccino", "EX_GST_1", "Espresso", "EX_GST_2", "Latte", 
+                      "EX_GST_3", "Iced Coffee", "EX_GST_4", "ORDER_CUPS", "ORDER_CHARGES", 
+                      "ORDER_PRICE_EXC_GST", "ORDER_TOTAL"]
+            row = [order_ID, method_of_order, item_1, item_1_cost.__round__(2), item_2, item_2_cost.__round__(2),
+                   item_3, item_3_cost.__round__(2), item_4, item_4_cost.__round__(2), amount_order_items,
+                   GST.__round__(2), total_price_ex_GST.__round__(2), total_line_price.__round__(2)]
             order_ID += 1
             with open('daily_summary.csv', 'a', encoding='UTF8') as daily_summary:
                 writer = csv.writer(daily_summary)
 
                 writer.writerow(row)
             if method_of_order == "DINE IN":
-                frequency_dinein += 1
+                frequency_dine_in += 1
             else:
                 frequency_takeaway += 1
-            frequency_total_orders = frequency_total_orders + frequency_takeaway + frequency_dinein
+            frequency_total_orders = frequency_total_orders + frequency_takeaway + frequency_dine_in
             frequency_cups_coffee = frequency_cups_coffee + item_1 + item_2 + item_3 + item_4
-            frequency_GST = frequency_GST +
+            frequency_GST = frequency_GST + GST
+            frequency_income = frequency_income + total_line_price
+
+            info_heading = ["ORDERS_COUNT", "DINE-IN", "TAKE-AWAY", "CUPS_COUNT", "GST_COLLECTED", "DAILY_INCOME"]
+            info_body = [order_ID - 1, frequency_dine_in, frequency_takeaway, frequency_cups_coffee,
+                         frequency_GST.__round__(2),
+                         frequency_income.__round__(2)]
 
             while count_2 == 0:
                 continue_order = input("Is it the end of the business day? ").upper()
@@ -193,6 +198,13 @@ while mode_of_order_count == 0:
                     mode_of_order_count = 1
                     new_order_count = 1
                     print("Business day has ended, Daily summary will be reset.")
+
+                    with open('daily_summary.csv', 'a', encoding='UTF8') as daily_summary:
+                        writer = csv.writer(daily_summary)
+
+                        writer.writerow(info_heading)
+                        writer.writerow(info_body)
+
                     count_2 = 1
                     os.system("start EXCEL.EXE daily_summary.csv")
                     while viewing_summary == 0:
@@ -205,7 +217,6 @@ while mode_of_order_count == 0:
                             viewing_summary = 1
                         else:
                             daily_summary_continue = 1
-
 
                 elif continue_order == "NO":
                     print("The business day is still on.")
