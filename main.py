@@ -1,4 +1,5 @@
 import csv
+import os
 
 f = open('daily_summary.csv', 'r+')
 
@@ -30,6 +31,17 @@ mode_of_operation = 0
 daily_summary_continue = 0
 new_order_count = 0
 order_ID = 1
+viewing_summary = 0
+difference = 0
+amount_tendered = 0
+
+frequency_dinein = 0
+frequency_takeaway = 0
+frequency_total_orders = 0
+frequency_cups_coffee = 0
+frequency_income = 0
+frequency_GST = 0
+
 header = ["ORDER_ID", "TYPE", "Cappuccino", "EXGST_1", "Esspresso", "EXGST_2", "Latte",
                                   "EXGST_3", "Iced Coffee", "EXGST_4", "ORDER_CUPS", "ORDER_CHARGES",
                                   "ORDER_PRICE_EXC_GST", "ORDER_TOTAL"]
@@ -83,6 +95,7 @@ while mode_of_order_count == 0:
 
         elif mode_of_operation == "DAILY SUMMARY":
             ### ADD IN WYA TO VIEW DAILY SUMMARY
+            os.system("start EXCEL.EXE daily_summary.csv")
             print("You may view the Daily Summary in the daily_summary.csv file above.")
             daily_summary_continue = 1
 
@@ -132,10 +145,10 @@ while mode_of_order_count == 0:
                   f"${item_4_cost} for the {item_4} Iced Coffee{plural_4}")
             print(f"Total price excluding Extra Charges is ${total_price_ex_GST:.2f}")
             print(f"Extra Charges cost is ${GST:.2f}")
-            print(f"The Total Line Item cost is ${total_line_price:.2f}")
+            print(f"The Total Line Item cost is ${total_line_price.__round__(2):.2f}")
 
             count_tendered = 0
-            total_line_price_new = total_line_price
+            total_line_price_new = total_line_price.__round__(2)
             while count_tendered == 0:
                 amount_tendered = float(input("\nEnter Amount Required: $"))
                 if amount_tendered < total_line_price_new:
@@ -158,7 +171,7 @@ while mode_of_order_count == 0:
             header = ["ORDER_ID", "TYPE", "Cappuccino", "EXGST_1", "Esspresso", "EXGST_2", "Latte",
                         "EXGST_3", "Iced Coffee", "EXGST_4", "ORDER_CUPS", "ORDER_CHARGES",
                         "ORDER_PRICE_EXC_GST", "ORDER_TOTAL"]
-            row = [order_ID, mode_of_operation, item_1, item_1_cost, item_2, item_2_cost, item_3,
+            row = [order_ID, method_of_order, item_1, item_1_cost, item_2, item_2_cost, item_3,
                     item_3_cost, item_4, item_4_cost, amount_order_items, GST.__round__(2), total_price_ex_GST.__round__(2),
                     total_line_price.__round__(2)]
             order_ID += 1
@@ -166,6 +179,13 @@ while mode_of_order_count == 0:
                 writer = csv.writer(daily_summary)
 
                 writer.writerow(row)
+            if method_of_order == "DINE IN":
+                frequency_dinein += 1
+            else:
+                frequency_takeaway += 1
+            frequency_total_orders = frequency_total_orders + frequency_takeaway + frequency_dinein
+            frequency_cups_coffee = frequency_cups_coffee + item_1 + item_2 + item_3 + item_4
+            frequency_GST = frequency_GST +
 
             while count_2 == 0:
                 continue_order = input("Is it the end of the business day? ").upper()
@@ -174,18 +194,17 @@ while mode_of_order_count == 0:
                     new_order_count = 1
                     print("Business day has ended, Daily summary will be reset.")
                     count_2 = 1
+                    os.system("start EXCEL.EXE daily_summary.csv")
+                    while viewing_summary == 0:
+                        view_summary = input("Are you finished viewing daily summary? ").upper()
+                        if view_summary == "YES":
 
-                    view_summary = input("Do you wish to view daily summary? ").upper()
-                    if view_summary == "YES":
-                        ### ADD IN WYA TO VIEW DAILY SUMMARY
-                        print("You may view Daily Summary above")
-                        daily_summary_continue = 1
-                        f.truncate(0)
-                        f.close()
-                    else:
-                        f.truncate(0)
-                        f.close()
-                        daily_summary_continue = 1
+                            daily_summary_continue = 1
+                            f.truncate(0)
+                            f.close()
+                            viewing_summary = 1
+                        else:
+                            daily_summary_continue = 1
 
 
                 elif continue_order == "NO":
