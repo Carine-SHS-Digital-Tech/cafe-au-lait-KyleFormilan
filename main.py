@@ -43,15 +43,16 @@ frequency_income = 0
 frequency_GST = 0
 method_of_order = 0
 
-header = ["ORDER_ID", "TYPE", "Cappuccino", "EX_GST_1", "Espresso", "EX_GST_2", "Latte", 
-          "EX_GST_3", "Iced Coffee", "EX_GST_4", "ORDER_CUPS", "ORDER_CHARGES", 
+header = ["ORDER_ID", "TYPE", "Cappuccino", "EX_GST_1", "Espresso", "EX_GST_2", "Latte",
+          "EX_GST_3", "Iced Coffee", "EX_GST_4", "ORDER_CUPS", "ORDER_CHARGES",
           "ORDER_PRICE_EXC_GST", "ORDER_TOTAL"]
 
+# Opens and writes to daily_summary csv file, sets the header each time the code is reset
 with open('daily_summary.csv', 'w', encoding='UTF8') as daily_summary:
     writer = csv.writer(daily_summary)
     writer.writerow(header)
 
-
+# While loop for looping through code whilst the business day is still on
 while mode_of_order_count == 0:
     while new_order_count == 0:
         daily_summary_continue = 0
@@ -59,6 +60,7 @@ while mode_of_order_count == 0:
 
         mode_of_operation = input("Type 'New order' or 'Daily summary' for your choice of operation: ").upper()
 
+        # Checks whether user wants a new order or to view the daily summary
         if mode_of_operation == "NEW ORDER":
             while takeaway_dine_in != 1:
                 method_of_order = input("\nDine in or Takeaway: ").upper()
@@ -71,6 +73,7 @@ while mode_of_order_count == 0:
                 else:
                     print("ERROR. INVALID INPUT")
 
+            # Gives user the option to choose their order
             print("\nItems on the menu today are; Cappuccino($3.00), Espresso($2.25), Latte($2.50) and "
                   "Iced Coffee($2.50)")
             amount_order_items = int(input("How many items are you ordering? "))
@@ -95,6 +98,7 @@ while mode_of_order_count == 0:
                 else:
                     print("We don't serve that on our menu")
 
+        # Opens up the daily summary in excel if user wishes to view daily summary
         elif mode_of_operation == "DAILY SUMMARY":
             os.system("start EXCEL.EXE daily_summary.csv")
             print("You may view the Daily Summary in the daily_summary.csv file above.")
@@ -103,6 +107,7 @@ while mode_of_order_count == 0:
         else:
             print("ERROR. Invalid Input")
 
+        # Sets the output to either plural or singular
         while daily_summary_continue != 1:
             if item_1 != 1:
                 plural_1 = "s"
@@ -121,6 +126,7 @@ while mode_of_order_count == 0:
             else:
                 plural_4 = ""
 
+            # Sets and calculates all the costs
             item_1_GST = 3.00 * GST * item_1
             item_2_GST = 2.25 * GST * item_2
             item_3_GST = 2.50 * GST * item_3
@@ -135,6 +141,7 @@ while mode_of_order_count == 0:
             GST = item_1_GST + item_2_GST + item_3_GST + item_4_GST
             total_line_price = GST + total_price_ex_GST
 
+            # Prints out the required information to the user
             print("\n\nYour receipt of your order is as follows,\n")
             print(f"You ordered {amount_order_items} items")
             print(f"Which consists of {item_1} Cappuccino{plural_1}, {item_2} Espresso{plural_2}, {item_3} "
@@ -147,6 +154,7 @@ while mode_of_order_count == 0:
             print(f"Extra Charges cost is ${GST:.2f}")
             print(f"The Total Line Item cost is ${total_line_price.__round__(2):.2f}")
 
+            # Works out the amount required to be paid and ensures that the user gets the appropriate change
             count_tendered = 0
             total_line_price_new = total_line_price.__round__(2)
             while count_tendered == 0:
@@ -167,8 +175,9 @@ while mode_of_order_count == 0:
             daily_summary_continue = 0
             count_2 = 0
 
-            header = ["ORDER_ID", "TYPE", "Cappuccino", "EX_GST_1", "Espresso", "EX_GST_2", "Latte", 
-                      "EX_GST_3", "Iced Coffee", "EX_GST_4", "ORDER_CUPS", "ORDER_CHARGES", 
+            # Updates csv file with every new order entered
+            header = ["ORDER_ID", "TYPE", "Cappuccino", "EX_GST_1", "Espresso", "EX_GST_2", "Latte",
+                      "EX_GST_3", "Iced Coffee", "EX_GST_4", "ORDER_CUPS", "ORDER_CHARGES",
                       "ORDER_PRICE_EXC_GST", "ORDER_TOTAL"]
             row = [order_ID, method_of_order, item_1, item_1_cost.__round__(2), item_2, item_2_cost.__round__(2),
                    item_3, item_3_cost.__round__(2), item_4, item_4_cost.__round__(2), amount_order_items,
@@ -189,9 +198,9 @@ while mode_of_order_count == 0:
 
             info_heading = ["ORDERS_COUNT", "DINE-IN", "TAKE-AWAY", "CUPS_COUNT", "GST_COLLECTED", "DAILY_INCOME"]
             info_body = [order_ID - 1, frequency_dine_in, frequency_takeaway, frequency_cups_coffee,
-                         frequency_GST.__round__(2),
-                         frequency_income.__round__(2)]
+                         frequency_GST.__round__(2), frequency_income.__round__(2)]
 
+            # Checks whether it is the end of the business day or not and if it is the end of the business day it displays the daily summary
             while count_2 == 0:
                 continue_order = input("Is it the end of the business day? ").upper()
                 if continue_order == "YES":
@@ -204,20 +213,22 @@ while mode_of_order_count == 0:
 
                         writer.writerow(info_heading)
                         writer.writerow(info_body)
-
+                    
                     count_2 = 1
+                    
+                    # Opens updated csv file in excel
                     os.system("start EXCEL.EXE daily_summary.csv")
                     while viewing_summary == 0:
                         view_summary = input("Are you finished viewing daily summary? ").upper()
                         if view_summary == "YES":
-
+                            # Resets csv file
                             daily_summary_continue = 1
                             f.truncate(0)
                             f.close()
                             viewing_summary = 1
                         else:
                             daily_summary_continue = 1
-
+                # Resets all the variables for the user to input a new order
                 elif continue_order == "NO":
                     print("The business day is still on.")
                     count_2 = 1
