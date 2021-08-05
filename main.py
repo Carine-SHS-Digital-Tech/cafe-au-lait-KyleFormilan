@@ -42,6 +42,7 @@ frequency_cups_coffee = 0
 frequency_income = 0
 frequency_GST = 0
 method_of_order = 0
+mode_of_operation_count = 0
 
 header = ["ORDER_ID", "TYPE", "Cappuccino", "EX_GST_1", "Espresso", "EX_GST_2", "Latte",
           "EX_GST_3", "Iced Coffee", "EX_GST_4", "ORDER_CUPS", "ORDER_CHARGES",
@@ -57,55 +58,57 @@ while mode_of_order_count == 0:
     while new_order_count == 0:
         daily_summary_continue = 0
         print("\n**************** WELCOME TO CAFE AU LAIT ******************\n\n")
+        while mode_of_operation_count == 0:
+            mode_of_operation = input("Type 'New order' or 'Daily summary' for your choice of operation: ").upper()
 
-        mode_of_operation = input("Type 'New order' or 'Daily summary' for your choice of operation: ").upper()
+            # Checks whether user wants a new order or to view the daily summary
+            if mode_of_operation == "NEW ORDER":
+                mode_of_operation_count = 1
+                while takeaway_dine_in != 1:
+                    method_of_order = input("\nDine in or Takeaway: ").upper()
+                    if method_of_order == "TAKEAWAY":
+                        GST += surcharge
+                        takeaway_dine_in = 1
+                    elif method_of_order == "DINE IN":
+                        GST = GST
+                        takeaway_dine_in = 1
+                    else:
+                        print("ERROR. INVALID INPUT")
 
-        # Checks whether user wants a new order or to view the daily summary
-        if mode_of_operation == "NEW ORDER":
-            while takeaway_dine_in != 1:
-                method_of_order = input("\nDine in or Takeaway: ").upper()
-                if method_of_order == "TAKEAWAY":
-                    GST += surcharge
-                    takeaway_dine_in = 1
-                elif method_of_order == "DINE IN":
-                    GST = GST
-                    takeaway_dine_in = 1
-                else:
-                    print("ERROR. INVALID INPUT")
+                # Gives user the option to choose their order
+                print("\nItems on the menu today are; Cappuccino($3.00), Espresso($2.25), Latte($2.50) and "
+                      "Iced Coffee($2.50)")
+                amount_order_items = int(input("How many items are you ordering? "))
+                while order_items_count < amount_order_items:
+                    order_item = input("Menu Choice: ").upper()
+                    if order_item == "CAPPUCCINO":
+                        order_price += 3.00
+                        order_items_count += 1
+                        item_1 += 1
+                    elif order_item == "ESPRESSO":
+                        order_price += 2.25
+                        order_items_count += 1
+                        item_2 += 1
+                    elif order_item == "LATTE":
+                        order_price += 2.50
+                        order_items_count += 1
+                        item_3 += 1
+                    elif order_item == "ICED COFFEE":
+                        order_price += 2.50
+                        order_items_count += 1
+                        item_4 += 1
+                    else:
+                        print("We don't serve that on our menu")
 
-            # Gives user the option to choose their order
-            print("\nItems on the menu today are; Cappuccino($3.00), Espresso($2.25), Latte($2.50) and "
-                  "Iced Coffee($2.50)")
-            amount_order_items = int(input("How many items are you ordering? "))
-            while order_items_count < amount_order_items:
-                order_item = input("Menu Choice: ").upper()
-                if order_item == "CAPPUCCINO":
-                    order_price += 3.00
-                    order_items_count += 1
-                    item_1 += 1
-                elif order_item == "ESPRESSO":
-                    order_price += 2.25
-                    order_items_count += 1
-                    item_2 += 1
-                elif order_item == "LATTE":
-                    order_price += 2.50
-                    order_items_count += 1
-                    item_3 += 1
-                elif order_item == "ICED COFFEE":
-                    order_price += 2.50
-                    order_items_count += 1
-                    item_4 += 1
-                else:
-                    print("We don't serve that on our menu")
+            # Opens up the daily summary in excel if user wishes to view daily summary
+            elif mode_of_operation == "DAILY SUMMARY":
+                mode_of_operation_count = 1
+                os.system("start EXCEL.EXE daily_summary.csv")
+                print("You may view the Daily Summary in the daily_summary.csv file above.")
+                daily_summary_continue = 1
 
-        # Opens up the daily summary in excel if user wishes to view daily summary
-        elif mode_of_operation == "DAILY SUMMARY":
-            os.system("start EXCEL.EXE daily_summary.csv")
-            print("You may view the Daily Summary in the daily_summary.csv file above.")
-            daily_summary_continue = 1
-
-        else:
-            print("ERROR. Invalid Input")
+            else:
+                print("ERROR. Invalid Input")
 
         # Sets the output to either plural or singular
         while daily_summary_continue != 1:
@@ -213,9 +216,9 @@ while mode_of_order_count == 0:
 
                         writer.writerow(info_heading)
                         writer.writerow(info_body)
-                    
+
                     count_2 = 1
-                    
+
                     # Opens updated csv file in excel
                     os.system("start EXCEL.EXE daily_summary.csv")
                     while viewing_summary == 0:
@@ -259,5 +262,6 @@ while mode_of_order_count == 0:
                     change = 0
                     amount_tendered = 0
                     difference = 0
+                    mode_of_operation_count = 0
                 else:
                     print("Invalid Input. Try again.")
